@@ -33,7 +33,12 @@ app.get(`/person`, cors(corsOptions), async (req, res) => {
    const people = await promisePool.query('SELECT * FROM person');
    res.send(people)
 });
-
+app.get('/cars', cors(corsOptions), async (req, res) => {
+  const make = req.query.make;
+  console.log(make);
+  const [ result ]= await promisePool.query('SELECT * FROM car WHERE make = ?',  [ make ]);
+  res.send(result);
+});
 app.listen(PORT, () => {
     console.log(`Express web API running on port: ${PORT}.`)
 })
