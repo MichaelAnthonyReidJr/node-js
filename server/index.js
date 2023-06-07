@@ -1,7 +1,7 @@
 const cors = require("cors");
 const express = require("express");
 const { body, check, param, validationResult } = require("express-validator");
-
+const { promisePool } = require("./PromisePool.js");
 const PORT = 80;
 const app = express();
 const corsOptions = {
@@ -23,7 +23,17 @@ app.get("/message", cors(corsOptions), async (req, res) => {
   // res.send(<YOUR OBJECT HERE>)
   res.send({ message: "Hello World" });
 });
+app.get(`/car/:id`, cors(corsOptions), async (req, res) => {
+  const id = req.params.id; 
+  const [ result ] = await promisePool.query("SELECT * FROM car WHERE car_id = ? ", [id]);
+  res.send( result [0]);
+ });
+
+app.get(`/person`, cors(corsOptions), async (req, res) => {
+   const people = await promisePool.query('SELECT * FROM person');
+   res.send(people)
+});
 
 app.listen(PORT, () => {
-  console.log(`Express web API running on port: ${PORT}.`);
-});
+    console.log(`Express web API running on port: ${PORT}.`)
+})
