@@ -34,11 +34,28 @@ app.get(`/person`, cors(corsOptions), async (req, res) => {
    res.send(people)
 });
 app.get('/cars', cors(corsOptions), async (req, res) => {
-  const make = req.query.make;
+  const make = req.params.make;
   console.log(make);
   const [ result ]= await promisePool.query('SELECT * FROM car WHERE make = ?',  [ make ]);
   res.send(result);
 });
+
+app.post('/cars/', cors(corsOptions), async (req, res) => {
+try{
+  const [ result ]  = await promisePool.query('INSERT INTO car(make, model, color, price) VALUES(?, ?, ?, ?)'
+  , ["Toyota","Corolla", "Gray", 30000]);
+  
+  const carId = result.insertId;
+  const [ newCar ] = await promisePool.query('SELECT * FROM car WHERE car_id = ?', carId)
+  //res.send("Car has been added")
+  res.send(newCar[0]);
+}
+catch {
+  res.status(500).send("Error.....adding car")
+}
+});
+
+
 app.listen(PORT, () => {
     console.log(`Express web API running on port: ${PORT}.`)
-})
+});
