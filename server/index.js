@@ -48,15 +48,11 @@ app.get("/cars", cors(corsOptions), async (req, res) => {
 app.post("/cars/", cors(corsOptions), async (req, res) => {
   try {
     const newCAr = req.body;
-    console.log(newCAr);
-    const [result] = await promisePool.execute("INSERT INTO car(make, model, color, price) VALUES(?, ?, ?, ?)", [newCAr.make , newCar.model, newCar.color, newCar.price]);
-    
+    const [result] = await promisePool.query("INSERT into car(make, model, color, price) VALUES(?, ?, ?, ?)",
+     [newCAr.make , newCAr.model, newCAr.color, newCAr.price]);
     const newCarId = result.insertId;
-    const [newCar] = await promisePool.query(
-      "SELECT * FROM car WHERE car_id = ?",
-      newCarId
+    const [newCar] = await promisePool.query("SELECT * FROM car WHERE car_id = ?",newCarId
     );
-    //res.send("Car has been added")
     res.send(newCar[0]);
   } catch {
     res.status(500).send("Error.....adding car");
@@ -76,6 +72,7 @@ app.put("/cars/:id", cors(corsOptions), async (req, res) => {
 //Exercise 6 Delete Car
 app.delete("/cars/:id", cors(corsOptions), async (req, res) => {
   const caRID = req.params.id;
+  console.log(caRID)
   const [result] = await promisePool.query("DELETE FROM car WHERE car_id = ?", [
     caRID,
   ]);
@@ -113,6 +110,7 @@ app.get("/person/:id", cors(corsOptions), async (req, res) => {
 //TLMS - Express API Part III Using mySQLPrroxy
 app.post("/person/", cors(corsOptions), async (req, res) => {
   const person1 = req.body;
+  console.log(person1)
   const addedPerson = await mySqlProxy.insertPerson(person1);
   res.send(addedPerson);
 });
